@@ -1,5 +1,5 @@
 import React  from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import {BrowserRouter, Route, Switch } from 'react-router-dom';
 import './scss/style.scss';
 
 const loading = (
@@ -27,6 +27,5 @@ const App = () => {
       </BrowserRouter>
     );
 }
-
 
 export default App;

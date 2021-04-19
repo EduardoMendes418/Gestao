@@ -47,4 +47,4 @@ useEffect(()=>{
   )
 }
 
-export default TheLayout
+export default TheLayout;

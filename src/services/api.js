@@ -1,4 +1,4 @@
-
+/*********************** SERVICE ********************** */
 
 const baseUrl= 'https://api.b7web.com.br/devcond/api/admin';
 
@@ -6,6 +6,7 @@ const request = async (method, endpoint, params, token = null) => {
     method = method.toLowerCase();
     let fullUrl = `${baseUrl}${endpoint}`;
     let body = null;
+    
     switch(method) {
       case 'get':
         let queryString = new URLSearchParams(params).toString();
