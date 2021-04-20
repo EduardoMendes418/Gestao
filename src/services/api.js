@@ -30,20 +30,36 @@ const request = async (method, endpoint, params, token = null) => {
 
 export default () => {
     return {
+
         //Pegar Token
        getToken: () => {
             return localStorage.getItem('token');
         },
+
         //Validar token
         validateToken: async () => {
             let token = localStorage.getItem('token');
             let json = await request ('post', '/auth/validate', {}, token);
             return json;
         },
+
         //Fazer login
         login: async (email,password) => {
             let json = await request ('post', '/auth/login', {email, password});
             return json;
-        }        
+        }, 
+
+        //Fazer lagout
+         logout: async () => {
+            let token = localStorage.getItem('token');
+            let json = await request ('post', '/auth/logout', {}, token);
+            localStorage.removeItem('token');
+            return json;
+         },   
+
+         //Consultar e pegar Avisos do Mural Pag1
+
+
+
     };
 }
