@@ -10,7 +10,6 @@ const loading = (
 
 // Containers
 const TheLayout = React.lazy(() => import('./containers/TheLayout'));
-
 // Pages
 const Login = React.lazy(() => import('./views/Login'));
 

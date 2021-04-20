@@ -31,6 +31,7 @@ const Login = () => {
   const  handleLoginButton = async () => {
     if(email && password){
       setLoading(true);
+      
       const result = await api.login( email, password);     
       setLoading(false);
       //salvando dados e direcionando para dashboard
@@ -59,10 +60,12 @@ const Login = () => {
                   <CForm>
                     <h1>Login</h1>
                     <p className="text-muted">Digite seus dados de acesso</p> 
-                    {/*Error*/}
-                    {error !== '' &&
+                   
+                     {/*Error*/}
+                     {error !== '' &&
                       <CAlert color="danger">{error}</CAlert> 
                     }
+                    
                     <CInputGroup className="mb-3">
                       <CInputGroupPrepend>
                         <CInputGroupText>
@@ -108,6 +111,7 @@ const Login = () => {
                         </CButton>
                       </CCol>
                     </CRow>
+
                   </CForm>
                 </CCardBody>
               </CCard>
