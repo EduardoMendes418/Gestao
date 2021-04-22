@@ -14,8 +14,7 @@ import {
     CModalFooter,
     CFormGroup,
     CInput,
-    CLabel,
-    CTextarea
+    CLabel
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import useApi from '../services/api';
@@ -33,9 +32,8 @@ export default () => {
     const [showModal, setShowModal] = useState(false);
     const [modalLoading, setModalLoading] = useState(false);
     const [modalTitleField, setModalTitleField] = useState('');
-    const [modalBodyField, setModalBodyField] = useState('');
+    const [modalFileField, setModalFileField] = useState('');
     const [modalId, setModalId] = useState('');
-
     //Criando tabelas
     const fields = [
         {label: 'Titulo', key: 'title'},
@@ -59,47 +57,51 @@ export default () => {
             alert(result.error);
         }
     }
-
-
-
     //fechar modal
     const handleCloseModal = () => {
         setShowModal(false);
     }
-
     //modal Editando, pegando informação e exibir no modal
     const handleEditButton = (index) => {
             setModalId(list[index]['id']);
             setModalTitleField(list[index]['title']);
-            setModalBodyField(list[index]['body']);
+            setModalFileField(list[index]['body']);
             setShowModal(true);
     }
 
     //modal quando Editar e Salvar os campos
     const handleModalSave = async () => {
-            if(modalTitleField && modalBodyField){
-                //Requisição Modal 
-                setModalLoading(true);
-                let result;
-                let data = {
-                    title: modalTitleField,
-                    body: modalBodyField
-                };
-                if(modalId === ''){
-                    result = await api.addWall(data);
+        if(modalTitleField){
+            //Requisição Modal 
+            setModalLoading(true);
+            let result;
+            let data = {
+                title: modalTitleField,
+            };
+            if(modalId === ''){
+                //melhorando documento pdf  
+                if(modalFileField){
+                    data.file = modalFileField;
+                    result = await api.addDocument(data);
                 }else{
-                    result = await api.updateWall(modalId, data);
-                }
-                setModalLoading(false);
-                if(result.error === ''){
-                    setShowModal(false);
-                    getList();
-                }else{
-                    alert(result.error);
-                }
+                    //se der error
+                    alert("Selecione o arquivo !");
+                    setModalLoading(false);
+                    return;
+                } 
             }else{
-                alert('Preencha os campos !');
+                result = await api.updateDocument(modalId, data);
             }
+            setModalLoading(false);
+            if(result.error === ''){
+                setShowModal(false);
+                getList();
+            }else{
+                alert(result.error);
+            }
+        }else{
+            alert('Preencha os campos !');
+        }
     }
 
     //Remove itens btn excluir 
@@ -113,21 +115,18 @@ export default () => {
                 }
             }
     }
-
     //Novo aviso (Limpar Historico  Dash)
     const handleNewButton = () => {
             setModalId('');
             setModalTitleField('');
-            setModalBodyField('');
+            setModalFileField('');
             setShowModal(true);
     }
-
-    //Btn Dowloand de Documentos 
+    //btn Dowloand de Documentos 
     const handleDowloandButton = (index) => {
          window.open(list[index]['fileurl']);
     }
-
-
+  
 
 return (
     <>
@@ -178,29 +177,30 @@ return (
         <CModalHeader 
         closeButton
         > 
-        {modalId === '' ? 'Novo': 'Editar'} Aviso 
+        {modalId === '' ? 'Novo': 'Editar'} Documento 
         </CModalHeader>    
         <CModalBody>
-            {/*FORMULARIO*/}
+            {/*FORMULARIO  DOCUMENTO*/}
             <CFormGroup>
-                <CLabel htmlFor="modal-title"> Titulo do aviso </CLabel>
+                <CLabel htmlFor="modal-title"> Titulo do Documento </CLabel>
                 <CInput 
                     type="text"
                     id="modal-title"
-                    placeholder="Digite um titulo para o aviso"
+                    placeholder="Digite um titulo para o documento"
                     value={modalTitleField}
                     onChange={e=>setModalTitleField(e.target.value)}
                     disabled={modalLoading}
                 />
-            </CFormGroup>       
+            </CFormGroup>  
             <CFormGroup>
-                <CLabel htmlFor="modal-body"> Corpo do aviso </CLabel>
-                <CTextarea
-                    id="modal-body"
-                    placeholder="Digite o conteudo do aviso"
-                    value={modalBodyField}
-                    onChange={e=>setModalBodyField(e.target.value)}
-                    disabled={modalLoading}
+                <CLabel htmlFor="modal-file"> Arquivo (PDF) </CLabel>
+                <CInput 
+                    type="file"
+                    id="modal-file"
+                    placeholder="Escolha um arquivo"
+                    name="file"
+                    onChange={e=>setModalFileField(e.target.files[0])}
+                    
                 />
             </CFormGroup>    
         </CModalBody>

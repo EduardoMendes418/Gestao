@@ -2,6 +2,7 @@
 const baseUrl= 'https://api.b7web.com.br/devcond/api/admin';
 
 const request = async (method, endpoint, params, token = null) => {
+
     method = method.toLowerCase();
     let fullUrl = `${baseUrl}${endpoint}`;
     let body = null;
@@ -80,11 +81,39 @@ export default () => {
          },
 
          //******************************** Paginas Documentos  ************************************
-         //Anexar doc
+         //Anexar docs
          getDocumentos: async () => {
             let token = localStorage.getItem('token');
             let json = await request('get', '/docs', {}, token);
             return json;
          },
+         
+         //Processo de Envio das informações e autenticacao com Imagem 
+         addDocument: async ( data) =>{
+            let token = localStorage.getItem('token');
+            let formData = new FormData();
+            formData.append('title', data.title);
+
+            if(data.file){
+                formData.append('file', data.file);
+            }
+            let req = await fetch(`${baseUrl}/docs`,{
+                method: 'POST',
+                headers:{
+                    'Authorization' : `Bearer ${token}`
+                },
+                body: formData
+            });
+            //resposta em json
+            let json = await req.json();
+            return json;
+         },
+
+         // Processo de Edição com Imagem 
+         updateDocument: async ( id, data) =>{
+             
+
+         }
+
     };
 }
