@@ -30,6 +30,8 @@ const request = async (method, endpoint, params, token = null) => {
 
 export default () => {
     return {
+        
+        //******************************** Paginas Avisos  ************************************
         //Pegar Token
        getToken: () => {
             return localStorage.getItem('token');
@@ -56,6 +58,32 @@ export default () => {
          getWall: async () => {
             let token = localStorage.getItem('token');
             let json = await request('get', '/walls', {}, token);
+            return json;
+         },
+         //Pagina WAll Update no Modal 
+         updateWall: async (id, data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('put', `/wall/${id}`, data, token);
+            return json;
+         },
+         //Add Novo Aviso
+         addWall: async(data)=> {
+            let token = localStorage.getItem('token');
+            let json = await request('post', '/walls', data, token);
+            return json;
+         },
+         //Btn Excluir
+         removeWall: async (id) => {
+            let token = localStorage.getItem('token');
+            let json = await request('delete', `/wall/${id}`, {}, token);
+            return json;
+         },
+
+         //******************************** Paginas Documentos  ************************************
+         //Anexar doc
+         getDocumentos: async () => {
+            let token = localStorage.getItem('token');
+            let json = await request('get', '/docs', {}, token);
             return json;
          },
     };

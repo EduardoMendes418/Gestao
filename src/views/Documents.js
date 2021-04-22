@@ -39,7 +39,6 @@ export default () => {
     //Criando tabelas
     const fields = [
         {label: 'Titulo', key: 'title'},
-        {label: 'Data de Criação', key: 'datecreated', _style:{width:'200px'}},
         {label: 'Ações', key: 'actions', _style:{width:'1px'}},
     ];
     
@@ -50,7 +49,7 @@ export default () => {
     const getList = async () => {
         //ativar requisicao
         setLoading(true);
-        const result = await api.getWall();
+        const result = await api.getDocumentos();
         setLoading(false);
 
         //resposta result ou error
@@ -60,6 +59,8 @@ export default () => {
             alert(result.error);
         }
     }
+
+
 
     //fechar modal
     const handleCloseModal = () => {
@@ -121,17 +122,24 @@ export default () => {
             setShowModal(true);
     }
 
+    //Btn Dowloand de Documentos 
+    const handleDowloandButton = (index) => {
+         window.open(list[index]['fileurl']);
+    }
+
+
+
 return (
     <>
     {/*PAGINA AVISOS*/}
     <CRow>
         <CCol>
-            <h2> Mural de Avisos </h2>
+            <h2> Documentos </h2>
             <CCard>
                 <CCardHeader>
                     <CButton color="primary" onClick={handleNewButton}>
                         <CIcon  name="cil-check" />
-                         Novo Aviso 
+                         Novo Documento
                     </CButton>
                 </CCardHeader>
                 <CCardBody>
@@ -150,6 +158,9 @@ return (
                             'actions': (item, index) => (
                             <td>
                                 <CButtonGroup>
+                                    <CButton color="success" onClick={() => handleDowloandButton(index)}>
+                                        <CIcon  name="cil-cloud-download" />
+                                    </CButton>
                                     <CButton color="info" onClick={() => handleEditButton(index)}> Editar </CButton>
                                     <CButton color="danger" onClick={() => handleRemoveButton(index)}> Excluir </CButton>
                                 </CButtonGroup>
