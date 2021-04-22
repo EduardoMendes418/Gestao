@@ -22,18 +22,17 @@ import useApi from '../services/api';
 //CARREGAMENTO DE LISTA
 export default () => {
 
-    //chamando api
-    const api = useApi();
-    //loading
-    const [loading, setLoading] = useState(true);
-    //carregar lista
-    const [list, setList] = useState([]);
+    const api = useApi();//chamando api
+    const [loading, setLoading] = useState(true);//loading
+    const [list, setList] = useState([]); //carregar lista
+
     //modal
     const [showModal, setShowModal] = useState(false);
     const [modalLoading, setModalLoading] = useState(false);
     const [modalTitleField, setModalTitleField] = useState('');
     const [modalFileField, setModalFileField] = useState('');
     const [modalId, setModalId] = useState('');
+
     //Criando tabelas
     const fields = [
         {label: 'Titulo', key: 'title'},
@@ -57,6 +56,7 @@ export default () => {
             alert(result.error);
         }
     }
+
     //fechar modal
     const handleCloseModal = () => {
         setShowModal(false);
@@ -68,7 +68,6 @@ export default () => {
             setModalFileField(list[index]['body']);
             setShowModal(true);
     }
-
     //modal quando Editar e Salvar os campos
     const handleModalSave = async () => {
         if(modalTitleField){
@@ -155,16 +154,16 @@ return (
                         //Criacao de Editar e Excluir 
                         scopedSlots={{
                             'actions': (item, index) => (
-                            <td>
-                                <CButtonGroup>
-                                    <CButton color="success" onClick={() => handleDowloandButton(index)}>
-                                        <CIcon  name="cil-cloud-download" />
-                                    </CButton>
-                                    <CButton color="info" onClick={() => handleEditButton(index)}> Editar </CButton>
-                                    <CButton color="danger" onClick={() => handleRemoveButton(index)}> Excluir </CButton>
-                                </CButtonGroup>
-                            </td>
-                            )
+                        <td>
+                            <CButtonGroup>
+                                <CButton color="success" onClick={() => handleDowloandButton(index)}>
+                                    <CIcon  name="cil-cloud-download" />
+                                </CButton>
+                                <CButton color="info" onClick={() => handleEditButton(index)}> Editar </CButton>
+                                <CButton color="danger" onClick={() => handleRemoveButton(index)}> Excluir </CButton>
+                            </CButtonGroup>
+                        </td>
+                        )
                         }}
                     />
                 </CCardBody>

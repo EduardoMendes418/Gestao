@@ -10,7 +10,7 @@ export default () => {
 
     //Sair na dashboard e direcionando para pagina Login    
     useEffect(() => {
-        const doLogout = async () =>{
+        const doLogout = async () => {
             await api.logout();
             history.push('/login');
         }        

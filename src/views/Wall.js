@@ -23,12 +23,10 @@ import useApi from '../services/api';
 //CARREGAMENTO DE LISTA
 export default () => {
 
-    //chamando api
-    const api = useApi();
-    //loading
-    const [loading, setLoading] = useState(true);
-    //carregar lista
-    const [list, setList] = useState([]);
+    const api = useApi();    //chamando api
+    const [loading, setLoading] = useState(true);//loading
+    const [list, setList] = useState([]);//carregar lista
+    
     //modal
     const [showModal, setShowModal] = useState(false);
     const [modalLoading, setModalLoading] = useState(false);
