@@ -110,9 +110,32 @@ export default () => {
          },
 
          // Processo de Edição com Imagem 
-         updateDocument: async ( id, data) =>{
-             
+         updateDocument: async ( id, data) => {
+            let token  = localStorage.getItem('token');
+            let formData = new FormData();
+            formData.append('title', data.title);
 
+            if(data.file){
+                formData.append('file', data.file);
+            }
+            //documento id envio de arquivo
+            let req = await fetch( `${baseUrl}/doc/${id}` ,{
+                method: 'POST',
+                headers: {
+                    'Authorization' : `Bearer ${token}`
+                },
+                body:formData
+            });
+            //resposta e, json
+            let json = await req.json();
+            return json;
+         },
+        
+         //Excluir  docuemntos
+         removeDocument: async ( id ) =>{
+            let token = localStorage.getItem('token');
+            let json = await request('delete', `/doc/${id}`, {}, token);
+            return json;
          }
 
     };

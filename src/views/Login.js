@@ -19,9 +19,10 @@ import useApi from '../services/api';
 import { useHistory } from 'react-router-dom';
 
 const Login = () => {
+
   const api = useApi(); //Chamando Api server
   const history = useHistory();
-
+  
   const [email, setEmail] = useState(''); //Email e Login
   const [password, setPassword] = useState('');//Email e Login
   const [error, setError] = useState('');//Salvar quanto tiver um error

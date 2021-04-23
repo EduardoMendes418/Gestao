@@ -89,6 +89,10 @@ export default () => {
                     return;
                 } 
             }else{
+                //aceitar mesmo se nao editar doc
+                if(setModalTitleField){
+                    data.file = modalFileField;
+                }
                 result = await api.updateDocument(modalId, data);
             }
             setModalLoading(false);
@@ -103,10 +107,10 @@ export default () => {
         }
     }
 
-    //Remove itens btn excluir 
+    //Remove itens btn excluir documentos 
     const handleRemoveButton = async (index) =>{
             if(window.confirm('Tem certeza que deseja excluir?')){
-                const result = await api.removeWall(list[index]['id']);
+                const result = await api.removeDocument(list[index]['id']);
                 if(result.error === ''){
                     getList();
                 }else{
