@@ -30,6 +30,7 @@ const request = async (method, endpoint, params, token = null) => {
 
 
 export default () => {
+
     return {
         
         //******************************** Paginas Avisos  ************************************
@@ -87,9 +88,8 @@ export default () => {
             let json = await request('get', '/docs', {}, token);
             return json;
          },
-         
          //Processo de Envio das informações e autenticacao com Imagem 
-         addDocument: async ( data) =>{
+         addDocument: async ( data) => {
             let token = localStorage.getItem('token');
             let formData = new FormData();
             formData.append('title', data.title);
@@ -108,7 +108,6 @@ export default () => {
             let json = await req.json();
             return json;
          },
-
          // Processo de Edição com Imagem 
          updateDocument: async ( id, data) => {
             let token  = localStorage.getItem('token');
@@ -130,13 +129,20 @@ export default () => {
             let json = await req.json();
             return json;
          },
-        
          //Excluir  docuemntos
-         removeDocument: async ( id ) =>{
+         removeDocument: async ( id ) => {
             let token = localStorage.getItem('token');
             let json = await request('delete', `/doc/${id}`, {}, token);
             return json;
+         },
+
+        //******************************** Paginas Resevas  ************************************    
+        //Pegar dados no banco (filtro)
+         getReservation: async () => {
+
+
          }
 
     };
 }
+
