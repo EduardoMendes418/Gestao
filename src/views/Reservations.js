@@ -35,8 +35,10 @@ export default () => {
 
     //Criando tabelas
     const fields = [
-        {label: 'Titulo', key: 'title'},
-        {label: 'Ações', key: 'actions', _style:{width:'1px'}},
+        {label: 'Unidade', key:'name_unit', sorter:false},
+        {label: 'Área', key:'name_area', sorter:false},
+        {label: 'Data da reserva', key: 'reservation_date'},
+        {label: 'Ações', key: 'actions', _style:{width:'1px'}, sorter:false, filter:false},
     ];
     
     useEffect(() => {  
@@ -46,7 +48,7 @@ export default () => {
     const getList = async () => {
         //ativar requisicao
         setLoading(true);
-        const result = await api.getDocumentos();
+        const result = await api.getReservations();
         setLoading(false);
 
         //resposta result ou error
@@ -108,7 +110,7 @@ export default () => {
     }
 
     //Remove itens btn excluir documentos 
-    const handleRemoveButton = async (index) =>{
+    const handleRemoveButton = async (index) => {
             if(window.confirm('Tem certeza que deseja excluir?')){
                 const result = await api.removeDocument(list[index]['id']);
                 if(result.error === ''){
@@ -150,24 +152,32 @@ return (
                         fields={fields}
                         loading={loading}
                         noItemsView=""
+                        columnFilter
+                        sorter
                         hover
                         striped
                         bordered
                         pagination
-                        itemsPerPage={2}
+                        itemsPerPage={4}
                         //Criacao de Editar e Excluir 
                         scopedSlots={{
+
+                            //Colocarndo  data formatada no campos 
+                             'reservation_date': (item) =>(
+                                <td>
+                                    {item.reservation_date_formatted}
+                                </td>
+                             ),   
+
+                            //Acao do btn Editar e Remover
                             'actions': (item, index) => (
-                        <td>
-                            <CButtonGroup>
-                                <CButton color="success" onClick={() => handleDowloandButton(index)}>
-                                    <CIcon  name="cil-cloud-download" />
-                                </CButton>
-                                <CButton color="info" onClick={() => handleEditButton(index)}> Editar </CButton>
-                                <CButton color="danger" onClick={() => handleRemoveButton(index)}> Excluir </CButton>
-                            </CButtonGroup>
-                        </td>
-                        )
+                                <td>
+                                    <CButtonGroup>
+                                        <CButton color="info" onClick={() => handleEditButton(index)}> Editar </CButton>
+                                        <CButton color="danger" onClick={() => handleRemoveButton(index)}> Excluir </CButton>
+                                    </CButtonGroup>
+                                </td>
+                            )
                         }}
                     />
                 </CCardBody>
@@ -224,5 +234,6 @@ return (
         </CModalFooter>               
     </CModal>
     </>
+    
     );
 };

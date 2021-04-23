@@ -138,9 +138,10 @@ export default () => {
 
         //******************************** Paginas Resevas  ************************************    
         //Pegar dados no banco (filtro)
-         getReservation: async () => {
-
-
+         getReservations: async () => {
+            let token = localStorage.getItem('token');
+            let json = await  request('get', `/reservations`, {}, token);
+            return json;
          }
 
     };

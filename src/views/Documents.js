@@ -154,7 +154,7 @@ return (
                         striped
                         bordered
                         pagination
-                        itemsPerPage={2}
+                        itemsPerPage={4}
                         //Criacao de Editar e Excluir 
                         scopedSlots={{
                             'actions': (item, index) => (
