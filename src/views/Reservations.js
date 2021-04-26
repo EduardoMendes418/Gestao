@@ -172,6 +172,7 @@ return (
                          Nova Reserva
                     </CButton>
                 </CCardHeader>
+                
                 <CCardBody>
                     <CDataTable 
                         items={list}

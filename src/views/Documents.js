@@ -108,7 +108,7 @@ export default () => {
     }
 
     //Remove itens btn excluir documentos 
-    const handleRemoveButton = async (index) =>{
+    const handleRemoveButton = async (index) => {
             if(window.confirm('Tem certeza que deseja excluir?')){
                 const result = await api.removeDocument(list[index]['id']);
                 if(result.error === ''){
@@ -118,6 +118,7 @@ export default () => {
                 }
             }
     }
+
     //Novo aviso (Limpar Historico  Dash)
     const handleNewButton = () => {
             setModalId('');
@@ -125,6 +126,7 @@ export default () => {
             setModalFileField('');
             setShowModal(true);
     }
+
     //btn Dowloand de Documentos 
     const handleDowloandButton = (index) => {
          window.open(list[index]['fileurl']);
@@ -167,7 +169,7 @@ return (
                                 <CButton color="danger" onClick={() => handleRemoveButton(index)}> Excluir </CButton>
                             </CButtonGroup>
                         </td>
-                        )
+                            )
                         }}
                     />
                 </CCardBody>
