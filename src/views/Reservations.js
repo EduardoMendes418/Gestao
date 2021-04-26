@@ -14,7 +14,8 @@ import {
     CModalFooter,
     CFormGroup,
     CInput,
-    CLabel
+    CLabel,
+    CSelect
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import useApi from '../services/api';
@@ -32,6 +33,13 @@ export default () => {
     const [modalTitleField, setModalTitleField] = useState('');
     const [modalFileField, setModalFileField] = useState('');
     const [modalId, setModalId] = useState('');
+    const [modalUnitList, setModalUnitList] = useState([]);
+    const [modalAreatList, setModalAreaList] = useState([]);
+    
+    //stande para salvar informações no modal
+    const [modalUnitId, setModalUnitlId] = useState(0);
+    const [modalAreatId, setModalAreaId] = useState(0);
+    const [modalDateField, setModalDateField] = useState('');
 
     //Criando tabelas
     const fields = [
@@ -40,15 +48,19 @@ export default () => {
         {label: 'Data da reserva', key: 'reservation_date'},
         {label: 'Ações', key: 'actions', _style:{width:'1px'}, sorter:false, filter:false},
     ];
-    
+
+     //Busca Lista, Unidade e Area
     useEffect(() => {  
         getList();
+        getUnitList();
+        getAreaList();
     },[]);
 
+    //Lista
     const getList = async () => {
         //ativar requisicao
         setLoading(true);
-        const result = await api.getReservations();
+        const result = await api.getReservations(); //criacao na Api
         setLoading(false);
 
         //resposta result ou error
@@ -56,6 +68,20 @@ export default () => {
             setList(result.list);
         }else{
             alert(result.error);
+        }
+    }
+    //Unidade 
+    const getUnitList = async () =>{
+        const result = await api.getUnits(); //criacao na Api
+        if(result.error === ''){
+            setModalUnitList(result.list);
+        }
+    }
+    //Area  
+    const getAreaList = async () =>{
+        const result = await api.getAreas(); //criacao na Api
+        if(result.error === ''){
+            setModalAreaList(result.list);
         }
     }
 
@@ -83,7 +109,7 @@ export default () => {
                 //melhorando documento pdf  
                 if(modalFileField){
                     data.file = modalFileField;
-                    result = await api.addDocument(data);
+                    result = await api.addDocument(data); //criacao na Api
                 }else{
                     //se der error
                     alert("Selecione o arquivo !");
@@ -95,7 +121,7 @@ export default () => {
                 if(setModalTitleField){
                     data.file = modalFileField;
                 }
-                result = await api.updateDocument(modalId, data);
+                result = await api.updateDocument(modalId, data); //criacao na Api
             }
             setModalLoading(false);
             if(result.error === ''){
@@ -112,7 +138,7 @@ export default () => {
     //Remove itens btn excluir documentos 
     const handleRemoveButton = async (index) => {
             if(window.confirm('Tem certeza que deseja excluir?')){
-                const result = await api.removeDocument(list[index]['id']);
+                const result = await api.removeDocument(list[index]['id']); //criacao na Api
                 if(result.error === ''){
                     getList();
                 }else{
@@ -127,12 +153,8 @@ export default () => {
             setModalFileField('');
             setShowModal(true);
     }
-    //btn Dowloand de Documentos 
-    const handleDowloandButton = (index) => {
-         window.open(list[index]['fileurl']);
-    }
+ 
   
-
 return (
     <>
     {/*PAGINA AVISOS*/}
@@ -141,7 +163,11 @@ return (
             <h2> Reservas </h2>
             <CCard>
                 <CCardHeader>
-                    <CButton color="primary" onClick={handleNewButton}>
+                    <CButton 
+                    color="primary" 
+                    onClick={handleNewButton}
+                    disabled={modalUnitList.length===0||modalAreatList.length===0}
+                    >
                         <CIcon  name="cil-check" />
                          Nova Reserva
                     </CButton>
@@ -173,8 +199,18 @@ return (
                             'actions': (item, index) => (
                                 <td>
                                     <CButtonGroup>
-                                        <CButton color="info" onClick={() => handleEditButton(index)}> Editar </CButton>
-                                        <CButton color="danger" onClick={() => handleRemoveButton(index)}> Excluir </CButton>
+                                        <CButton 
+                                         color="info" 
+                                         onClick={() => handleEditButton(index)}
+                                         disabled={modalUnitList.length===0||modalAreatList.length===0}   
+                                         >Editar 
+                                         </CButton>
+                                        
+                                        <CButton 
+                                        color="danger" 
+                                        onClick={() => handleRemoveButton(index)}
+                                        >Excluir 
+                                        </CButton>
                                     </CButtonGroup>
                                 </td>
                             )
@@ -185,37 +221,65 @@ return (
         </CCol>
     </CRow>
 
-    {/*CORPO MODAL*/}
+    {/*CORPO MODAL RESERVA*/}
     <CModal show={showModal} onClose={handleCloseModal} >
         <CModalHeader 
         closeButton
         > 
-        {modalId === '' ? 'Novo': 'Editar'} Documento 
+        {modalId === '' ? 'Novo': 'Editar'} Reserva
         </CModalHeader>    
         <CModalBody>
-            {/*FORMULARIO  DOCUMENTO*/}
+            
+            {/* UNIDADE*/}          
             <CFormGroup>
-                <CLabel htmlFor="modal-title"> Titulo do Documento </CLabel>
+                <CLabel htmlFor="modal-unit">Unidade</CLabel>
+                <CSelect
+                    id="modal-unit"
+                    custom   
+                    onChange={e=>setModalUnitlId(e.target.value)}    
+                 >
+                     {modalUnitList.map((item, index) =>(
+                        <option
+                            key={index}
+                            value={item.id}
+                         
+                        >{item.name}
+                        </option>
+                     ))}
+                </CSelect>        
+            </CFormGroup>
+
+            {/* AREA */}                
+             <CFormGroup>
+                 <CLabel htmlFor="modal-area">Aréa</CLabel>
+                  <CSelect
+                    id="modal-area"
+                    custom
+                    onChange={e=>setModalAreaId(e.target.value)}
+                  >
+                    {modalAreatList.map((item, index) =>(
+                        <option
+                            key={index}
+                            value={item.id}
+                        >{item.title}
+                        </option>
+                    ))}
+                  </CSelect>       
+            </CFormGroup>           
+
+            {/*FORMULARIO  Data da reserva*/}
+            <CFormGroup>
+                <CLabel htmlFor="modal-date"> Data da reserva</CLabel>
                 <CInput 
                     type="text"
-                    id="modal-title"
-                    placeholder="Digite um titulo para o documento"
-                    value={modalTitleField}
-                    onChange={e=>setModalTitleField(e.target.value)}
+                    id="modal-date"
+                    value={setModalDateField}
+                    onChange={e=>setModalDateField(e.target.value)}
                     disabled={modalLoading}
                 />
-            </CFormGroup>  
-            <CFormGroup>
-                <CLabel htmlFor="modal-file"> Arquivo (PDF) </CLabel>
-                <CInput 
-                    type="file"
-                    id="modal-file"
-                    placeholder="Escolha um arquivo"
-                    name="file"
-                    onChange={e=>setModalFileField(e.target.files[0])}
-                    
-                />
-            </CFormGroup>    
+            </CFormGroup> 
+           
+       
         </CModalBody>
 
         <CModalFooter>

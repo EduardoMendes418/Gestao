@@ -1,4 +1,3 @@
-/*********************** SERVICE ********************** */
 const baseUrl= 'https://api.b7web.com.br/devcond/api/admin';
 
 const request = async (method, endpoint, params, token = null) => {
@@ -142,7 +141,19 @@ export default () => {
             let token = localStorage.getItem('token');
             let json = await  request('get', `/reservations`, {}, token);
             return json;
-         }
+         },
+         //Pegar Unidade
+         getUnits: async () => {
+            let token = localStorage.getItem('token');
+            let json = await  request('get', `/units`, {}, token);
+            return json;
+         },
+         //Pegar Areas
+         getAreas: async () => {
+            let token = localStorage.getItem('token');
+            let json = await  request('get', `/areas`, {}, token);
+            return json;
+        },
 
     };
 }
