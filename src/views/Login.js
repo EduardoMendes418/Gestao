@@ -32,7 +32,7 @@ const Login = () => {
   const  handleLoginButton = async () => {
     if(email && password){
       setLoading(true);
-      const result = await api.login( email, password);     
+        const result = await api.login( email, password);     
       setLoading(false);
       //salvando dados e direcionando para dashboard
       if(result.error ===''){

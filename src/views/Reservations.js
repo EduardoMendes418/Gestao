@@ -1,10 +1,10 @@
 import React, { useState , useEffect } from 'react';
-import { 
-    CRow, 
-    CCol, 
-    CCard, 
-    CCardHeader, 
-    CCardBody, 
+import {
+    CRow,
+    CCol,
+    CCard,
+    CCardHeader,
+    CCardBody,
     CButton,
     CDataTable,
     CButtonGroup,
@@ -34,11 +34,11 @@ export default () => {
     const [modalFileField, setModalFileField] = useState('');
     const [modalId, setModalId] = useState('');
     const [modalUnitList, setModalUnitList] = useState([]);
-    const [modalAreatList, setModalAreaList] = useState([]);
-    
+    const [modalAreaList, setModalAreaList] = useState([]);
+
     //stande para salvar informações no modal
-    const [modalUnitId, setModalUnitlId] = useState(0);
-    const [modalAreatId, setModalAreaId] = useState(0);
+    const [modalUnitId, setModalUnitId] = useState(0);
+    const [modalAreaId, setModalAreaId] = useState(0);
     const [modalDateField, setModalDateField] = useState('');
 
     //Criando tabelas
@@ -50,7 +50,7 @@ export default () => {
     ];
 
      //Busca Lista, Unidade e Area
-    useEffect(() => {  
+    useEffect(() => {
         getList();
         getUnitList();
         getAreaList();
@@ -70,14 +70,14 @@ export default () => {
             alert(result.error);
         }
     }
-    //Unidade 
+    //Unidade
     const getUnitList = async () =>{
         const result = await api.getUnits(); //criacao na Api
         if(result.error === ''){
             setModalUnitList(result.list);
         }
     }
-    //Area  
+    //Area
     const getAreaList = async () =>{
         const result = await api.getAreas(); //criacao na Api
         if(result.error === ''){
@@ -90,38 +90,33 @@ export default () => {
         setShowModal(false);
     }
     //modal Editando, pegando informação e exibir no modal
-    const handleEditButton = (index) => {
+    const handleEditButton = (id) => {
+          // arrumando bug select
+          let index = list.findIndex(v=>v.id===id);
+
+
+            // Preenchimento dos campos editar no final monstra
             setModalId(list[index]['id']);
-            setModalTitleField(list[index]['title']);
-            setModalFileField(list[index]['body']);
+            setModalUnitId(list[index]['id_unit']);
+            setModalAreaId(list[index]['id_area']);
+            setModalDateField(list[index]['reservation_date']);
             setShowModal(true);
     }
     //modal quando Editar e Salvar os campos
     const handleModalSave = async () => {
-        if(modalTitleField){
-            //Requisição Modal 
+        if(modalUnitId && setModalAreaId && setModalDateField){
+            //Requisição Modal
             setModalLoading(true);
             let result;
             let data = {
-                title: modalTitleField,
+                id_unit: modalUnitId,
+                id_area: modalAreaId,
+                reservation_date: modalDateField ,
             };
             if(modalId === ''){
-                //melhorando documento pdf  
-                if(modalFileField){
-                    data.file = modalFileField;
-                    result = await api.addDocument(data); //criacao na Api
-                }else{
-                    //se der error
-                    alert("Selecione o arquivo !");
-                    setModalLoading(false);
-                    return;
-                } 
+                result = await api.addReservation(data);
             }else{
-                //aceitar mesmo se nao editar doc
-                if(setModalTitleField){
-                    data.file = modalFileField;
-                }
-                result = await api.updateDocument(modalId, data); //criacao na Api
+                result = await api.updateReservation(modalId, data); //criacao na Api
             }
             setModalLoading(false);
             if(result.error === ''){
@@ -135,10 +130,10 @@ export default () => {
         }
     }
 
-    //Remove itens btn excluir documentos 
+    //Remove itens btn excluir RESERVATION
     const handleRemoveButton = async (index) => {
             if(window.confirm('Tem certeza que deseja excluir?')){
-                const result = await api.removeDocument(list[index]['id']); //criacao na Api
+                const result = await api.removeReservation(list[index]['id']); //criacao na Api
                 if(result.error === ''){
                     getList();
                 }else{
@@ -148,13 +143,15 @@ export default () => {
     }
     //Novo aviso (Limpar Historico  Dash)
     const handleNewButton = () => {
-            setModalId('');
-            setModalTitleField('');
-            setModalFileField('');
-            setShowModal(true);
+        //Adicionar uma nova reserva/ limpa os campos
+        setModalId('');
+        setModalUnitId(modalUnitList[0]['id']);
+        setModalAreaId(modalAreaList[0]['id']);
+        setModalDateField('');
+        setShowModal(true);
     }
- 
-  
+
+
 return (
     <>
     {/*PAGINA AVISOS*/}
@@ -163,18 +160,18 @@ return (
             <h2> Reservas </h2>
             <CCard>
                 <CCardHeader>
-                    <CButton 
-                    color="primary" 
+                    <CButton
+                    color="primary"
                     onClick={handleNewButton}
-                    disabled={modalUnitList.length===0||modalAreatList.length===0}
+                    disabled={modalUnitList.length===0||modalAreaList.length===0}
                     >
                         <CIcon  name="cil-check" />
                          Nova Reserva
                     </CButton>
                 </CCardHeader>
-                
+
                 <CCardBody>
-                    <CDataTable 
+                    <CDataTable
                         items={list}
                         fields={fields}
                         loading={loading}
@@ -185,32 +182,32 @@ return (
                         striped
                         bordered
                         pagination
-                        itemsPerPage={4}
-                        //Criacao de Editar e Excluir 
+                        itemsPerPage={10}
+                        //Criacao de Editar e Excluir
                         scopedSlots={{
 
-                            //Colocarndo  data formatada no campos 
+                            //Colocarndo  data formatada no campos
                              'reservation_date': (item) =>(
                                 <td>
                                     {item.reservation_date_formatted}
                                 </td>
-                             ),   
+                             ),
 
                             //Acao do btn Editar e Remover
                             'actions': (item, index) => (
                                 <td>
                                     <CButtonGroup>
-                                        <CButton 
-                                         color="info" 
-                                         onClick={() => handleEditButton(index)}
-                                         disabled={modalUnitList.length===0||modalAreatList.length===0}   
-                                         >Editar 
+                                        <CButton
+                                         color="info"
+                                         onClick={() => handleEditButton(item.id)}
+                                         disabled={modalUnitList.length===0||modalAreaList.length===0}
+                                         >Editar
                                          </CButton>
-                                        
-                                        <CButton 
-                                        color="danger" 
+
+                                        <CButton
+                                        color="danger"
                                         onClick={() => handleRemoveButton(index)}
-                                        >Excluir 
+                                        >Excluir
                                         </CButton>
                                     </CButtonGroup>
                                 </td>
@@ -218,87 +215,88 @@ return (
                         }}
                     />
                 </CCardBody>
-            </CCard> 
+            </CCard>
         </CCol>
     </CRow>
 
     {/*CORPO MODAL RESERVA*/}
     <CModal show={showModal} onClose={handleCloseModal} >
-        <CModalHeader 
+        <CModalHeader
         closeButton
-        > 
+        >
         {modalId === '' ? 'Novo': 'Editar'} Reserva
-        </CModalHeader>    
+        </CModalHeader>
         <CModalBody>
-            
-            {/* UNIDADE*/}          
+
+            {/* UNIDADE*/}
             <CFormGroup>
                 <CLabel htmlFor="modal-unit">Unidade</CLabel>
                 <CSelect
                     id="modal-unit"
-                    custom   
-                    onChange={e=>setModalUnitlId(e.target.value)}    
+                    custom
+                    onChange={e=>setModalUnitId(e.target.value)}
+                    value={modalUnitId}
                  >
                      {modalUnitList.map((item, index) =>(
                         <option
                             key={index}
                             value={item.id}
-                         
                         >{item.name}
                         </option>
                      ))}
-                </CSelect>        
+                </CSelect>
             </CFormGroup>
 
-            {/* AREA */}                
+            {/* AREA */}
              <CFormGroup>
                  <CLabel htmlFor="modal-area">Aréa</CLabel>
                   <CSelect
                     id="modal-area"
                     custom
                     onChange={e=>setModalAreaId(e.target.value)}
+                    value={modalAreaId}
                   >
-                    {modalAreatList.map((item, index) =>(
+                    {modalAreaList.map((item, index) =>(
                         <option
                             key={index}
                             value={item.id}
                         >{item.title}
                         </option>
                     ))}
-                  </CSelect>       
-            </CFormGroup>           
+                  </CSelect>
+            </CFormGroup>
 
             {/*FORMULARIO  Data da reserva*/}
             <CFormGroup>
                 <CLabel htmlFor="modal-date"> Data da reserva</CLabel>
-                <CInput 
+                <CInput
                     type="text"
                     id="modal-date"
-                    value={setModalDateField}
+                    value={modalDateField}
                     onChange={e=>setModalDateField(e.target.value)}
                     disabled={modalLoading}
                 />
-            </CFormGroup> 
-           
-       
+            </CFormGroup>
+
+
         </CModalBody>
 
         <CModalFooter>
-            <CButton 
+            <CButton
             color="primary"
             onClick={handleModalSave}
             disabled={modalLoading}>
             { modalLoading ? 'Carregando...' : 'Salvar'}
             </CButton>
 
-            <CButton 
+            <CButton
             color="secondary"
             onClick={handleCloseModal}
             disabled={modalLoading}
             > Cancelar </CButton>
-        </CModalFooter>               
+        </CModalFooter>
     </CModal>
     </>
-    
+
     );
 };

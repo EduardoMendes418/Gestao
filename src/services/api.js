@@ -5,7 +5,7 @@ const request = async (method, endpoint, params, token = null) => {
     method = method.toLowerCase();
     let fullUrl = `${baseUrl}${endpoint}`;
     let body = null;
-    
+
     switch(method) {
       case 'get':
         let queryString = new URLSearchParams(params).toString();
@@ -28,10 +28,11 @@ const request = async (method, endpoint, params, token = null) => {
 }
 
 
+
 export default () => {
 
     return {
-        
+
         //******************************** Paginas Avisos  ************************************
         //Pegar Token
        getToken: () => {
@@ -47,21 +48,21 @@ export default () => {
         login: async (email,password) => {
             let json = await request ('post', '/auth/login', {email, password});
             return json;
-        }, 
+        },
         //Fazer lagout
          logout: async () => {
             let token = localStorage.getItem('token');
             let json = await request ('post', '/auth/logout', {}, token);
             localStorage.removeItem('token');
             return json;
-         },   
+         },
          //Consultar e pegar Avisos do Mural Pag1
          getWall: async () => {
             let token = localStorage.getItem('token');
             let json = await request('get', '/walls', {}, token);
             return json;
          },
-         //Pagina WAll Update no Modal 
+         //Pagina WAll Update no Modal
          updateWall: async (id, data) => {
             let token = localStorage.getItem('token');
             let json = await request('put', `/wall/${id}`, data, token);
@@ -87,7 +88,8 @@ export default () => {
             let json = await request('get', '/docs', {}, token);
             return json;
          },
-         //Processo de Envio das informações e autenticacao com Imagem 
+
+         //Processo de Envio das informações e autenticacao com Imagem
          addDocument: async ( data) => {
             let token = localStorage.getItem('token');
             let formData = new FormData();
@@ -107,7 +109,7 @@ export default () => {
             let json = await req.json();
             return json;
          },
-         // Processo de Edição com Imagem 
+         // Processo de Edição com Imagem
          updateDocument: async ( id, data) => {
             let token  = localStorage.getItem('token');
             let formData = new FormData();
@@ -135,7 +137,7 @@ export default () => {
             return json;
          },
 
-        //******************************** Paginas Resevas  ************************************    
+        //******************************** Paginas Resevas  ************************************
         //Pegar dados no banco (filtro)
          getReservations: async () => {
             let token = localStorage.getItem('token');
@@ -154,6 +156,24 @@ export default () => {
             let json = await  request('get', `/areas`, {}, token);
             return json;
         },
+        //adicionar reserva
+        addReservation: async (data) => {
+            let token = localStorage.getItem('token');
+            let json = await  request('post', `/reservations`, data, token);
+            return json;
+        },
+        //atualizar Reserva
+        updateReservation: async (id, data) => {
+            let token = localStorage.getItem('token');
+            let json = await  request('put', `/reservation/${id}`, data, token);
+            return json;
+        },
+        //Excluir Reserva
+        removeReservation: async (id) => {
+            let token = localStorage.getItem('token');
+            let json = await request('delete', `/reservation/${id}`, {}, token);
+            return json;
+        }
 
     };
 }
